@@ -42,7 +42,7 @@ resource "azurerm_network_security_group" "web-server" {
   resource_group_name = azurerm_resource_group.web-server.name
 
   security_rule {
-    name                       = "Allow HTTP"
+    name                       = "Allow-HTTP"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
