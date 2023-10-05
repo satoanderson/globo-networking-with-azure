@@ -99,7 +99,7 @@ resource "azurerm_public_ip" "web-server" {
 resource "azurerm_network_interface" "web-server" {
   name                = "web-server-nic"
   location            = azurerm_resource_group.web-server.location
-  resource_group_name = azurerm_resource_group.web-server.location
+  resource_group_name = azurerm_resource_group.web-server.name
 
   ip_configuration {
     name                          = "public-web-server"
