@@ -24,8 +24,8 @@ provider "azurerm" {
 ##################################################################################
 
 data "azurerm_subnet" "public_subnet1" {
-  name =   "public_subnet1"
-  resource_group_name = azurerm_resource_group.web-server.name
+  name                 = "public_subnet1"
+  resource_group_name  = azurerm_resource_group.web-server.name
   virtual_network_name = azurerm_virtual_network.web-server.name
 }
 
@@ -36,7 +36,8 @@ data "azurerm_subnet" "public_subnet1" {
 locals {
   custom_data = <<EOF
 #!/bin/bash
-sudo apt-get install -y nginx
+sudo apt update
+sudo apt install -y nginx
 sudo service nginx start
 sudo rm /usr/share/nginx/html/index.html
 echo '<html><head><title>Taco Team Server on Azure!</title></head><body style=\"background-color:#1F778D\"><p style=\"text-align: center;\"><span style=\"color:#FFFFFF;\"><span style=\"font-size:28px;\">You did it! Have a &#127790;</span></span></p></body></html>' | sudo tee /usr/share/nginx/html/index.html
@@ -118,7 +119,7 @@ resource "azurerm_linux_virtual_machine" "web-server" {
   admin_password        = "Simba1102"
   os_disk {
     storage_account_type = "Standard_LRS"
-    caching = "None"
+    caching              = "None"
   }
   source_image_reference {
     publisher = "Canonical"
