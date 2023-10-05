@@ -75,6 +75,11 @@ resource "azurerm_network_security_group" "web-server" {
   }
 }
 
+resource "azurerm_subnet_network_security_group_association" "web-server" {
+  subnet_id                 = data.azurerm_subnet.public_subnet1.id
+  network_security_group_id = azurerm_network_security_group.web-server.id
+}
+
 resource "azurerm_virtual_network" "web-server" {
   name                = "web-server"
   location            = azurerm_resource_group.web-server.location
