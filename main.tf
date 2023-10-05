@@ -110,13 +110,14 @@ resource "azurerm_network_interface" "web-server" {
 }
 
 resource "azurerm_linux_virtual_machine" "web-server" {
-  name                  = "Web-Server"
-  resource_group_name   = azurerm_resource_group.web-server.name
-  location              = azurerm_resource_group.web-server.location
-  size                  = "Standard_A2_v2"
-  admin_username        = "adminsato"
-  network_interface_ids = [azurerm_network_interface.web-server.id]
-  admin_password        = "Simba1102"
+  name                            = "Web-Server"
+  resource_group_name             = azurerm_resource_group.web-server.name
+  location                        = azurerm_resource_group.web-server.location
+  size                            = "Standard_A2_v2"
+  admin_username                  = "adminsato"
+  network_interface_ids           = [azurerm_network_interface.web-server.id]
+  admin_password                  = "Simba1102"
+  disable_password_authentication = false
   os_disk {
     storage_account_type = "Standard_LRS"
     caching              = "None"
