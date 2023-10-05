@@ -117,7 +117,7 @@ resource "azurerm_linux_virtual_machine" "web-server" {
   admin_username                  = "adminsato"
   network_interface_ids           = [azurerm_network_interface.web-server.id]
   admin_password                  = "Simba1102"
-  disable_password_authentication = "False"
+  disable_password_authentication = false
   os_disk {
     storage_account_type = "Standard_LRS"
     caching              = "None"
