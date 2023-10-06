@@ -52,15 +52,14 @@ EOF
 
 resource "azurerm_resource_group" "web-server" {
   name     = "Terraform-Getting-Started"
-  location = var.location
-  tags     = local.tags
+  location = "Canada East"
 }
 
-# NSG #
+# NETWORKING #
 
 resource "azurerm_network_security_group" "web-server" {
   name                = "web-server-nsg"
-  location            = var.location
+  location            = azurerm_resource_group.web-server.location
   resource_group_name = azurerm_resource_group.web-server.name
 
   security_rule {
@@ -74,9 +73,6 @@ resource "azurerm_network_security_group" "web-server" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-
-  tags = local.tags
-
 }
 
 resource "azurerm_subnet_network_security_group_association" "web-server" {
@@ -84,39 +80,30 @@ resource "azurerm_subnet_network_security_group_association" "web-server" {
   network_security_group_id = azurerm_network_security_group.web-server.id
 }
 
-# NETWORKING #
-
 resource "azurerm_virtual_network" "web-server" {
   name                = "web-server"
-  location            = var.location
+  location            = azurerm_resource_group.web-server.location
   resource_group_name = azurerm_resource_group.web-server.name
-  address_space       = [var.address_space]
+  address_space       = ["10.0.0.0/16"]
 
   subnet {
     name           = "public_subnet1"
-    address_prefix = cidrsubnet(var.address_space, 8, 1)
+    address_prefix = "10.0.1.0/24"
   }
-
-  tags = local.tags
-
-}
-
-resource "azurerm_public_ip" "web-server" {
-  name                = "webServerPIP"
-  resource_group_name = azurerm_resource_group.web-server.name
-  location            = var.location
-  allocation_method   = "Static"
-  domain_name_label   = "panda"
-
-  tags = local.tags
-
 }
 
 # INSTANCES #
 
+resource "azurerm_public_ip" "web-server" {
+  name                = "webServerPIP"
+  resource_group_name = azurerm_resource_group.web-server.name
+  location            = azurerm_resource_group.web-server.location
+  allocation_method   = "Static"
+}
+
 resource "azurerm_network_interface" "web-server" {
   name                = "web-server-nic"
-  location            = var.location
+  location            = azurerm_resource_group.web-server.location
   resource_group_name = azurerm_resource_group.web-server.name
 
   ip_configuration {
@@ -124,25 +111,20 @@ resource "azurerm_network_interface" "web-server" {
     subnet_id                     = data.azurerm_subnet.public_subnet1.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.web-server.id
-
   }
-
-  tags = local.tags
-
 }
 
 resource "azurerm_linux_virtual_machine" "web-server" {
   name                            = "Web-Server"
   resource_group_name             = azurerm_resource_group.web-server.name
-  location                        = var.location
-  size                            = var.vm_size
+  location                        = azurerm_resource_group.web-server.location
+  size                            = "Standard_A2_v2"
   admin_username                  = "adminsato"
   network_interface_ids           = [azurerm_network_interface.web-server.id]
   admin_password                  = "Simba1102"
   disable_password_authentication = false
-
   os_disk {
-    storage_account_type = var.disk_type
+    storage_account_type = "Standard_LRS"
     caching              = "None"
   }
   source_image_reference {
@@ -153,7 +135,4 @@ resource "azurerm_linux_virtual_machine" "web-server" {
   }
 
   user_data = base64encode(local.custom_data)
-
-  tags = local.tags
-
 }
